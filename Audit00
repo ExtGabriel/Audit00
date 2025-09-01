@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Auditoría - Guatemala</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .header p {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .tab-button {
+            flex: 1;
+            min-width: 120px;
+            background: transparent;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .tab-button:hover {
+            background: rgba(103, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(103, 126, 234, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(103, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(103, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            color: #212529;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .inventory-item {
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .inventory-item h4 {
+            color: #495057;
+            margin-bottom: 10px;
+        }
+
+        .inventory-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 10px;
+            background: rgba(103, 126, 234, 0.1);
+            border-radius: 6px;
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 1.2em;
+            color: #667eea;
+        }
+
+        .file-upload {
+            border: 2px dashed #667eea;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: rgba(103, 126, 234, 0.05);
+            cursor: pointer;
+        }
+
+        .file-upload:hover {
+            border-color: #764ba2;
+            background: rgba(103, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .file-upload.dragover {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.1);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .user-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .user-item {
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            border-left: 4px solid #28a745;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .email-composer {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .alert {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+        }
+
+        .alert-success {
+            background: rgba(40, 167, 69, 0.1);
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: rgba(220, 53, 69, 0.1);
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .alert-info {
+            background: rgba(23, 162, 184, 0.1);
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 100px auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .tab-button {
+                min-width: auto;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="loginScreen" class="login-form">
+        <div class="logo">
+            <h2>🇬🇹 AuditPro</h2>
+            <p>Sistema de Auditoría - Guatemala</p>
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Correo Electrónico</label>
+                <input type="email" id="loginEmail" required>
+            </div>
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" id="loginPassword" required>
+            </div>
+            <div class="form-group">
+                <label>Tipo de Usuario</label>
+                <select id="userType" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="admin">Administrador</option>
+                    <option value="auditor">Auditor</option>
+                    <option value="client">Cliente</option>
+                    <option value="developer">Desarrollador</option>
+                </select>
+            </div>
+            <button type="submit" class="btn" style="width: 100%;">Iniciar Sesión</button>
+        </form>
+    </div>
+
+    <div id="mainApp" class="hidden">
+        <div class="container">
+            <div class="header">
+                <h1>🇬🇹 Sistema de Auditoría</h1>
+                <p>Plataforma Integral de Auditoría para Empresas Guatemaltecas</p>
+                <div style="text-align: right; margin-top: 15px;">
+                    <span id="currentUser" style="margin-right: 20px; font-weight: bold;"></span>
+                    <button class="btn btn-danger" onclick="logout()">Cerrar Sesión</button>
+                </div>
+            </div>
+
+            <div class="nav-tabs" id="navTabs">
+                <button class="tab-button active" onclick="switchTab('inventarios')">📦 Inventarios</button>
+                <button class="tab-button" onclick="switchTab('usuarios')">👥 Usuarios</button>
+                <button class="tab-button" onclick="switchTab('archivos')">📁 Archivos</button>
+                <button class="tab-button" onclick="switchTab('correos')">📧 Correos</button>
+                <button class="tab-button" onclick="switchTab('reportes')">📊 Reportes</button>
+                <button class="tab-button" onclick="switchTab('perfil')">👤 Perfil</button>
+            </div>
+
+            <div id="inventarios" class="tab-content active">
+                <h2>📦 Gestión de Inventarios</h2>
+                
+                <div class="grid">
+                    <div class="card">
+                        <h3>Agregar Producto al Inventario</h3>
+                        <form id="inventoryForm">
+                            <div class="form-group">
+                                <label>Código del Producto</label>
+                                <input type="text" id="productCode" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Nombre del Producto</label>
+                                <input type="text" id="productName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Cantidad</label>
+                                <input type="number" id="productQuantity" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Costo Unitario (Q.)</label>
+                                <input type="number" step="0.01" id="unitCost" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Precio de Venta (Q.)</label>
+                                <input type="number" step="0.01" id="salePrice" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Valor de Mercado (Q.)</label>
+                                <input type="number" step="0.01" id="marketValue" required>
+                            </div>
+                            <button type="submit" class="btn">Agregar Producto</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Resumen de Inventario</h3>
+                        <div class="inventory-stats">
+                            <div class="stat">
+                                <strong id="totalProducts">0</strong>
+                                <span>Productos</span>
+                            </div>
+                            <div class="stat">
+                                <strong id="totalValue">Q. 0.00</strong>
+                                <span>Valor Total</span>
+                            </div>
+                            <div class="stat">
+                                <strong id="totalVNR">Q. 0.00</strong>
+                                <span>VNR Total</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Lista de Productos</h3>
+                    <div id="inventoryList"></div>
+                </div>
+            </div>
+
+            <div id="usuarios" class="tab-content">
+                <h2>👥 Gestión de Usuarios</h2>
+                
+                <div class="grid">
+                    <div class="card">
+                        <h3>Crear Nuevo Usuario</h3>
+                        <form id="userForm">
+                            <div class="form-group">
+                                <label>Nombre Completo</label>
+                                <input type="text" id="userName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Correo Electrónico</label>
+                                <input type="email" id="userEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Número de Teléfono</label>
+                                <input type="tel" id="userPhone" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Empresa</label>
+                                <input type="text" id="userCompany" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Puesto</label>
+                                <input type="text" id="userPosition" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo de Usuario</label>
+                                <select id="userRole" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="admin">Administrador</option>
+                                    <option value="auditor">Auditor</option>
+                                    <option value="client">Cliente</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn">Crear Usuario</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Usuarios Registrados</h3>
+                        <div class="user-list" id="usersList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="archivos" class="tab-content">
+                <h2>📁 Gestión de Archivos</h2>
+                
+                <div class="card">
+                    <h3>Subir Archivos</h3>
+                    <div class="file-upload" id="fileUploadZone">
+                        <div>
+                            <h4>📁 Arrastra archivos aquí o haz clic para seleccionar</h4>
+                            <p>Formatos soportados: .xlsx, .pdf, .png, .docx (máx. 200MB)</p>
+                        </div>
+                        <input type="file" id="fileInput" multiple accept=".xlsx,.pdf,.png,.docx" style="display: none;">
+                    </div>
+                    <div id="uploadProgress" class="hidden">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <p id="uploadStatus"></p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Archivos Subidos</h3>
+                    <div id="filesList"></div>
+                </div>
+            </div>
+
+            <div id="correos" class="tab-content">
+                <h2>📧 Centro de Correos</h2>
+                
+                <div class="email-composer">
+                    <h3>Enviar Correo</h3>
+                    <form id="emailForm">
+                        <div class="grid">
+                            <div class="form-group">
+                                <label>Para</label>
+                                <input type="email" id="emailTo" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Asunto</label>
+                                <input type="text" id="emailSubject" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Mensaje</label>
+                            <textarea id="emailMessage" rows="8" required></textarea>
+                        </div>
+                        <button type="submit" class="btn">📧 Enviar Correo</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Plantillas de Correo</h3>
+                    <button class="btn btn-warning" onclick="loadEmailTemplate('audit')">Solicitud de Auditoría</button>
+                    <button class="btn btn-warning" onclick="loadEmailTemplate('report')">Reporte de Inventario</button>
+                    <button class="btn btn-warning" onclick="loadEmailTemplate('reminder')">Recordatorio</button>
+                </div>
+            </div>
+
+            <div id="reportes" class="tab-content">
+                <h2>📊 Reportes y Análisis</h2>
+                
+                <div class="grid">
+                    <div class="card">
+                        <h3>Generar Reportes</h3>
+                        <button class="btn btn-success" onclick="generateReport('inventory')">📋 Reporte de Inventario</button>
+                        <button class="btn btn-success" onclick="generateReport('vnr')">💰 Análisis VNR</button>
+                        <button class="btn btn-success" onclick="generateReport('valuation')">📈 Valuación de Inventarios</button>
+                        <button class="btn btn-success" onclick="generateReport('users')">👥 Reporte de Usuarios</button>
+                    </div>
+
+                    <div class="card">
+                        <h3>Estadísticas Generales</h3>
+                        <div class="inventory-stats">
+                            <div class="stat">
+                                <strong id="statsProducts">0</strong>
+                                <span>Total Productos</span>
+                            </div>
+                            <div class="stat">
+                                <strong id="statsUsers">0</strong>
+                                <span>Usuarios Activos</span>
+                            </div>
+                            <div class="stat">
+                                <strong id="statsFiles">0</strong>
+                                <span>Archivos</span>
+                            </div>
+                            <div class="stat">
+                                <strong id="statsEmails">0</strong>
+                                <span>Correos Enviados</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="perfil" class="tab-content">
+                <h2>👤 Perfil de Usuario</h2>
+                
+                <div class="card">
+                    <h3>Información Personal</h3>
+                    <form id="profileForm">
+                        <div class="grid">
+                            <div class="form-group">
+                                <label>Nombre Completo</label>
+                                <input type="text" id="profileName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Correo Electrónico</label>
+                                <input type="email" id="profileEmail" required>
+                            </div>
+                        </div>
+                        <div class="grid">
+                            <div class="form-group">
+                                <label>Teléfono</label>
+                                <input type="tel" id="profilePhone" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Empresa</label>
+                                <input type="text" id="profileCompany" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Puesto</label>
+                            <input type="text" id="profilePosition" required>
+                        </div>
+                        <button type="submit" class="btn">💾 Actualizar Perfil</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Estado global de la aplicación
+        let appState = {
+            currentUser: null,
+            inventory: [],
+            users: [],
+            files: [],
+            emails: [],
+            statistics: {
+                products: 0,
+                users: 0,
+                files: 0,
+                emails: 0
+            }
+        };
+
+        // Inicialización de la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Configurar event listeners
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('inventoryForm').addEventListener('submit', handleInventorySubmit);
+            document.getElementById('userForm').addEventListener('submit', handleUserSubmit);
+            document.getElementById('emailForm').addEventListener('submit', handleEmailSubmit);
+            document.getElementById('profileForm').addEventListener('submit', handleProfileSubmit);
+            
+            // Configurar subida de archivos
+            setupFileUpload();
+            
+            // Cargar datos iniciales de ejemplo
+            loadSampleData();
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const userType = document.getElementById('userType').value;
+
+            // Simulación de autenticación
+            if (email && password && userType) {
+                appState.currentUser = {
+                    email: email,
+                    type: userType,
+                    name: getUserNameFromEmail(email)
+                };
+
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                document.getElementById('currentUser').textContent = `${appState.currentUser.name} (${userType})`;
+                
+                setupUserInterface();
+                showAlert('success', '¡Bienvenido al Sistema de Auditoría!');
+            }
+        }
+
+        function getUserNameFromEmail(email) {
+            return email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function logout() {
+            appState.currentUser = null;
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('loginForm').reset();
+        }
+
+        function setupUserInterface() {
+            const userType = appState.currentUser.type;
+            const navTabs = document.getElementById('navTabs');
+            
+            // Mostrar/ocultar pestañas según el tipo de usuario
+            if (userType === 'client') {
+                // Los clientes solo ven inventarios, archivos y su perfil
+                hideTabsExcept(['inventarios', 'archivos', 'perfil']);
+            } else if (userType === 'auditor') {
+                // Los auditores ven todo excepto gestión de usuarios
+                hideTabsExcept(['inventarios', 'usuarios', 'archivos', 'correos', 'reportes', 'perfil']);
+            }
+            // Admin y desarrollador ven todo
+        }
+
+        function hideTabsExcept(allowedTabs) {
+            const tabs = document.querySelectorAll('.tab-button');
+            tabs.forEach(tab => {
+                const tabName = tab.getAttribute('onclick').match(/switchTab\('(.+)'\)/)[1];
+                if (!allowedTabs.includes(tabName)) {
+                    tab.style.display = 'none';
+                }
+            });
+        }
+
+        function switchTab(tabName) {
+            // Ocultar todas las pestañas
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remover clase active de botones
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Mostrar pestaña seleccionada
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Actualizar contenido específico de la pestaña
+            if (tabName === 'reportes') {
+                updateStatistics();
+            }
+        }
+
+        // GESTIÓN DE INVENTARIOS
+        function handleInventorySubmit(e) {
+            e.preventDefault();
+            
+            const product = {
+                id: Date.now(),
+                code: document.getElementById('productCode').value,
+                name: document.getElementById('productName').value,
+                quantity: parseInt(document.getElementById('productQuantity').value),
+                unitCost: parseFloat(document.getElementById('unitCost').value),
+                salePrice: parseFloat(document.getElementById('salePrice').value),
+                marketValue: parseFloat(document.getElementById('marketValue').value),
+                date: new Date().toLocaleDateString()
+            };
+
+            // Calcular VNR (Valor Neto de Realización)
+            product.vnr = Math.min(product.salePrice, product.marketValue) * product.quantity;
+            product.totalCost = product.unitCost * product.quantity;
+            product.totalValue = product.salePrice * product.quantity;
+
+            appState.inventory.push(product);
+            updateInventoryDisplay();
+            document.getElementById('inventoryForm').reset();
+            showAlert('success', 'Producto agregado exitosamente al inventario');
+        }
+
+        function updateInventoryDisplay() {
+            const inventoryList = document.getElementById('inventoryList');
+            let html = '';
+
+            appState.inventory.forEach(product => {
+                html += `
+                    <div class="inventory-item">
+                        <h4>${product.name} (${product.code})</h4>
+                        <div class="inventory-stats">
+                            <div class="stat">
+                                <strong>${product.quantity}</strong>
+                                <span>Cantidad</span>
+                            </div>
+                            <div class="stat">
+                                <strong>Q. ${product.unitCost.toFixed(2)}</strong>
+                                <span>Costo Unitario</span>
+                            </div>
+                            <div class="stat">
+                                <strong>Q. ${product.totalCost.toFixed(2)}</strong>
+                                <span>Costo Total</span>
+                            </div>
+                            <div class="stat">
+                                <strong>Q. ${product.vnr.toFixed(2)}</strong>
+                                <span>VNR</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <button class="btn btn-warning" onclick="editProduct(${product.id})">Editar</button>
+                            <button class="btn btn-danger" onclick="deleteProduct(${product.id})">Eliminar</button>
+                        </div>
+                    </div>
+                `;
